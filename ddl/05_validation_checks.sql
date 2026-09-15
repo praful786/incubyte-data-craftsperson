@@ -1,0 +1,20 @@
+-- Native Snowflake equivalents of the Python validation checks, for use
+-- once data is loaded into STAGING_MEMBERS.
+
+-- 1. Mandatory field checks
+SELECT MEMBER_ID, COUNTRY, 'MEMBER_NAME missing' AS ISSUE
+FROM STAGING_MEMBERS WHERE MEMBER_NAME IS NULL
+UNION ALL
+SELECT MEMBER_ID, COUNTRY, 'ENROLLMENT_DATE missing' AS ISSUE
+FROM STAGING_MEMBERS WHERE ENROLLMENT_DATE IS NULL;
+
+-- 2. Key-column uniqueness (per country)
+SELECT MEMBER_ID, COUNTRY, COUNT(*) AS OCCURRENCES
+FROM STAGING_MEMBERS
+GROUP BY MEMBER_ID, COUNTRY
+HAVING COUNT(*) > 1;
+
+-- 3. Rows already flagged with a data-quality note during load
+SELECT MEMBER_ID, COUNTRY, DATA_QUALITY_NOTES
+FROM STAGING_MEMBERS
+WHERE DATA_QUALITY_NOTES IS NOT NULL;
