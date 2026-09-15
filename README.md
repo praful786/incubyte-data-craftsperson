@@ -85,12 +85,18 @@ separate Snowflake load/transform steps in production.
   issues, not silently dropped.
 
 ## Use of AI tools
-[Add 2-3 sentences here on how you used AI — be specific: e.g. "Used
-Claude to design the raw/staging/target schema split, draft the Python
-parsing logic for ambiguous date formats, and structure the validation
-checks. I reviewed and adjusted [specific things] based on my own
-understanding of the data." Be honest and specific — this is explicitly
-evaluated.]
+I used Claude throughout this assessment — for designing the raw →
+staging → country-split architecture, drafting the DDL for all four
+table layers, and writing the Python transformation, JSON-flattening,
+and validation logic. Before writing any code, I had Claude profile
+the actual source files, which surfaced that they don't match the
+PDF's sample schema and each has its own data-quality issues (USA's
+ambiguous integer dates, Australia's invalid date and literal 'NULL'
+string) — this drove the "land everything, flag problems, don't drop
+rows" design used throughout. I ran and verified every script's output
+myself against the real sample data before committing, and reviewed
+the logic (e.g. the latest-record-wins tie-breaking and the USA date
+parsing) to make sure I understood and could defend each decision.
 
 ## Deliverables checklist
 - [x] DDL — raw/landing, staging, country target tables
